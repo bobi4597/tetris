@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Tetris from './tetris/Tetris.jsx';
-import prepareData from "./tetris/sampleData";
 
 class App extends Component {
   render() {
-    const data = prepareData();
     return (
       <React.Fragment>
         <div className="App">
@@ -18,7 +16,7 @@ class App extends Component {
             To get started, edit <code>src/App.js</code> and save to reload.
           </p>
         </div>
-        <Tetris data={data} />
+        <Tetris />
       </React.Fragment>
     );
   }

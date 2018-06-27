@@ -6427,6 +6427,12 @@ styled-components@^3.3.3:
     stylis-rule-sheet "^0.0.10"
     supports-color "^3.2.3"
 
+styled-tools@^0.5.4:
+  version "0.5.4"
+  resolved "https://registry.npmjs.org/styled-tools/-/styled-tools-0.5.4.tgz#1c04fe8d388f282c573247aa06c5953cacd610d9"
+  dependencies:
+    lodash "^4.17.10"
+
 stylis-rule-sheet@^0.0.10:
   version "0.0.10"
   resolved "https://registry.npmjs.org/stylis-rule-sheet/-/stylis-rule-sheet-0.0.10.tgz#44e64a2b076643f4b52e5ff71efc04d8c3c4a430"
