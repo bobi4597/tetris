@@ -13,19 +13,60 @@ const StyledTetris = styled.div`
   justify-content: center;
 `;
 
-function calculateMergedBoardData(boardData, currentShapeState) {
-  const mergedBoardData = boardData.map((row) => row.slice());
-  const shape = shapes[currentShapeState.index][currentShapeState.rotation];
+const hasCollision = (boardData, shapeState) => {
+  const shape = shapes[shapeState.index][shapeState.rotation];
 
-  for (let r = currentShapeState.row; r < currentShapeState.row + shape.length; ++r) {
-    for (let c = currentShapeState.col; c < currentShapeState.col + shape[0].length; ++c) {
-      if (mergedBoardData[r][c] === 0) {
-        mergedBoardData[r][c] = shape[r - currentShapeState.row][c - currentShapeState.col];
+  for (let r = shapeState.row; r < shapeState.row + shape.length; ++r) {
+    for (let c = shapeState.col; c < shapeState.col + shape[0].length; ++c) {
+      const cellRow = r - shapeState.row;
+      const cellCol = c - shapeState.col;
+      if (r < 0 || r >= BOARD_HEIGHT || c < 0 || c >= BOARD_WIDTH) {
+        if (shape[cellRow][cellCol] !== 0) {
+          return true;
+        }
+      } else {
+        if (boardData[r][c] !== 0 && shape[cellRow][cellCol] !== 0) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
+
+const calculateMergedBoardData = (boardData, shapeState) => {
+  const mergedBoardData = boardData.map((row) => row.slice());
+  const shape = shapes[shapeState.index][shapeState.rotation];
+
+  for (let r = shapeState.row; r < shapeState.row + shape.length; ++r) {
+    for (let c = shapeState.col; c < shapeState.col + shape[0].length; ++c) {
+      if (r >= 0 && r < BOARD_HEIGHT && c >= 0 && c < BOARD_WIDTH && mergedBoardData[r][c] === 0) {
+        mergedBoardData[r][c] = shape[r - shapeState.row][c - shapeState.col];
       }
     }
   }
   return mergedBoardData;
-}
+};
+
+const finalizeShapeOnBoard = (boardData, shapeState) => {
+  const startRow = shapeState.row;
+  let shapeData = shapes[shapeState.index][shapeState.rotation];
+  const endRow = startRow + shapeData.length;
+  const startCol = shapeState.col;
+  const endCol = startCol + shapeData[0].length;
+
+  for (let r = startRow; r < endRow; ++r) {
+    for (let c = startCol; c < endCol; ++c) {
+      if (r >= 0 && r < BOARD_HEIGHT && c >= 0 && c < BOARD_WIDTH) {
+        if (boardData[r][c] === 0 && shapeData[r - startRow][c - startCol] !== 0) {
+          boardData[r][c] = shapeData[r - startRow][c - startCol];
+        }
+      }
+    }
+  }
+
+  return boardData;
+};
 
 class Tetris extends React.Component {
 
@@ -45,7 +86,7 @@ class Tetris extends React.Component {
   componentDidMount() {
     this.gameTimer = setInterval(
       () => this.tick(),
-      300
+      100
     );
   }
 
@@ -54,54 +95,31 @@ class Tetris extends React.Component {
   }
 
   tick() {
-    // if it reached bottom we update the board data
-    // 1. check if the currentPiece can move down
-    // 1.1. If so, just increase the row (row ++)
-    // 1.2. If NOT:
-    // 1.2.1. Merge the piece with the board
-    // 1.2.2. Randomly choose new piece and position it at the top (row = 0)
-    if (this.state.currentShapeState.row === 16) {
-      const newBoardData = Tetris.mergePieceWithBoard(this.state.currentShapeState, this.state.boardData);
-      const newShape = {
+    const { currentShapeState, boardData } = this.state;
+
+    const nextShapeState = {
+      ...currentShapeState,
+      row: currentShapeState.row + 1,
+    };
+
+    if (!hasCollision(boardData, nextShapeState)) {
+      this.setState({
+        boardData: boardData,
+        currentShapeState: nextShapeState,
+      });
+    } else {
+      const newBoardData = finalizeShapeOnBoard(boardData, currentShapeState);
+      const newShapeState = {
         index: Math.floor(Math.random() * shapes.length),
         rotation: 0,
         row: 0,
-        col: Math.floor(Math.random() * BOARD_WIDTH),
+        col: Math.floor(Math.random() * (BOARD_WIDTH - 4)),
       };
       this.setState({
         boardData: newBoardData,
-        currentShapeState: newShape,
-      });
-    } else {
-      this.setState({
-        boardData: this.state.boardData,
-        currentShapeState: {
-          ...this.state.currentShapeState,
-          row: this.state.currentShapeState.row + 1,
-        }
+        currentShapeState: newShapeState,
       });
     }
-  }
-
-  static mergePieceWithBoard(shapeState, boardData) {
-    const startRow = shapeState.row;
-    let shapeData = shapes[shapeState.index][shapeState.rotation];
-    const endRow = startRow + shapeData.length;
-    const startCol = shapeState.col;
-    const endCol = startCol + shapeData[0].length;
-
-    for (let r = startRow; r < endRow; ++r) {
-      for (let c = startCol; c < endCol; ++c) {
-        if (r >= 0 && r < BOARD_HEIGHT && c >= 0 && c < BOARD_WIDTH) {
-          if (boardData[r][c] === 0 && shapeData[r - startRow][c - startCol] !== 0) {
-            boardData[r][c] = shapeData[r - startRow][c - startCol];
-          }
-        }
-      }
-    }
-
-    return boardData;
-
   }
 
   render() {
