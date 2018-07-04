@@ -8,8 +8,10 @@ const StyledRow = styled.div`
   justify-content: space-even;
 `;
 
-const Row = ({ rowData }) => {
-  const cells = rowData.map((cellData, index) => <Cell key={index} cellData={cellData} />);
+const Row = ({ rowData, rowIndex, shapeState }) => {
+  const cells = rowData.map((cellData, index) =>
+    <Cell key={index} cellData={cellData} />
+  );
   return <StyledRow>{cells}</StyledRow>;
 };
 

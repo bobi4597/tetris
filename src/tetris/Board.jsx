@@ -10,8 +10,8 @@ const StyledBoard = styled.div`
   padding: 1px;
 `;
 
-const Board = ({ data }) => {
-  const rows = data.map((rowData, index) => <Row key={index} rowData={rowData} />);
+const Board = ({ boardData }) => {
+  const rows = boardData.map((rowData, index) => <Row key={index} rowData={rowData} />);
   return <StyledBoard>{rows}</StyledBoard>;
 };
 

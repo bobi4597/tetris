@@ -16,7 +16,7 @@ const StyledCell = styled.div`
 `;
 
 const Cell = ({ cellData }) => {
-  return <StyledCell cellData={cellData}></StyledCell>;
+  return <StyledCell cellData={cellData} />;
 };
 
 export default Cell;
