@@ -7,8 +7,12 @@ import Board from "./Board";
 
 const BOARD_HEIGHT = 20;
 const BOARD_WIDTH = 10;
+const LEFT_KEY = 37;
+// const UP_KEY = 38;
+const RIGHT_KEY = 39;
+// const DOWN_KEY = 40;
 
-const StyledTetris = styled.div`
+const StyledTetris = styled.main`
   display: flex;
   justify-content: center;
 `;
@@ -102,12 +106,8 @@ class Tetris extends React.Component {
       row: currentShapeState.row + 1,
     };
 
-    if (!hasCollision(boardData, nextShapeState)) {
-      this.setState({
-        boardData: boardData,
-        currentShapeState: nextShapeState,
-      });
-    } else {
+    if (hasCollision(boardData, nextShapeState)) {
+      // stop here and start with new shape from top
       const newBoardData = finalizeShapeOnBoard(boardData, currentShapeState);
       const newShapeState = {
         index: Math.floor(Math.random() * shapes.length),
@@ -119,13 +119,41 @@ class Tetris extends React.Component {
         boardData: newBoardData,
         currentShapeState: newShapeState,
       });
+    } else {
+      // fall down
+      this.setState({
+        boardData: boardData,
+        currentShapeState: nextShapeState,
+      });
     }
   }
+
+  handleKeyDown = (event) => {
+    if (event.keyCode === LEFT_KEY) {
+      this.moveLeftRight(-1);
+    } else if (event.keyCode === RIGHT_KEY) {
+      this.moveLeftRight(1);
+    }
+  };
+
+  moveLeftRight = (distance) => {
+    const { boardData, currentShapeState } = this.state;
+    const newShapeState = {
+      ...currentShapeState,
+      col: currentShapeState.col + distance,
+    };
+    if (!hasCollision(boardData, newShapeState)) {
+      this.setState({
+        ...this.state,
+        currentShapeState: newShapeState,
+      })
+    }
+  };
 
   render() {
     const {boardData, currentShapeState} = this.state;
     const mergedBoardData = calculateMergedBoardData(boardData, currentShapeState);
-    return <StyledTetris>
+    return <StyledTetris tabIndex="0" onKeyDown={this.handleKeyDown}>
       <Board boardData={mergedBoardData} />
     </StyledTetris>;
   }

@@ -7,7 +7,6 @@ const StyledCell = styled.div`
   width: 20px;
   height: 20px;
   border: 1px solid gray;
-  margin: 1px;
   background-color: ${switchProp('cellData', {
     0: 'transparent',
     1: 'red',

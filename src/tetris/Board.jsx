@@ -7,7 +7,6 @@ const StyledBoard = styled.div`
   display: flex;
   flex-direction: column;
   border: 1px solid gray;
-  padding: 1px;
 `;
 
 const Board = ({ boardData }) => {
