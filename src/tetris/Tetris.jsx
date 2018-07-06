@@ -4,11 +4,14 @@ import prepareInitialData from './sampleData';
 import shapes from './shapes/index.js';
 
 import Board from "./Board";
+import {
+  calculateMergedBoardData,
+  finalizeShapeOnBoard,
+  hasCollision,
+} from "./gameLogic";
 
-const BOARD_HEIGHT = 20;
-const BOARD_WIDTH = 10;
 const LEFT_KEY = 37;
-// const UP_KEY = 38;
+const UP_KEY = 38;
 const RIGHT_KEY = 39;
 // const DOWN_KEY = 40;
 
@@ -16,61 +19,6 @@ const StyledTetris = styled.main`
   display: flex;
   justify-content: center;
 `;
-
-const hasCollision = (boardData, shapeState) => {
-  const shape = shapes[shapeState.index][shapeState.rotation];
-
-  for (let r = shapeState.row; r < shapeState.row + shape.length; ++r) {
-    for (let c = shapeState.col; c < shapeState.col + shape[0].length; ++c) {
-      const cellRow = r - shapeState.row;
-      const cellCol = c - shapeState.col;
-      if (r < 0 || r >= BOARD_HEIGHT || c < 0 || c >= BOARD_WIDTH) {
-        if (shape[cellRow][cellCol] !== 0) {
-          return true;
-        }
-      } else {
-        if (boardData[r][c] !== 0 && shape[cellRow][cellCol] !== 0) {
-          return true;
-        }
-      }
-    }
-  }
-  return false;
-};
-
-const calculateMergedBoardData = (boardData, shapeState) => {
-  const mergedBoardData = boardData.map((row) => row.slice());
-  const shape = shapes[shapeState.index][shapeState.rotation];
-
-  for (let r = shapeState.row; r < shapeState.row + shape.length; ++r) {
-    for (let c = shapeState.col; c < shapeState.col + shape[0].length; ++c) {
-      if (r >= 0 && r < BOARD_HEIGHT && c >= 0 && c < BOARD_WIDTH && mergedBoardData[r][c] === 0) {
-        mergedBoardData[r][c] = shape[r - shapeState.row][c - shapeState.col];
-      }
-    }
-  }
-  return mergedBoardData;
-};
-
-const finalizeShapeOnBoard = (boardData, shapeState) => {
-  const startRow = shapeState.row;
-  let shapeData = shapes[shapeState.index][shapeState.rotation];
-  const endRow = startRow + shapeData.length;
-  const startCol = shapeState.col;
-  const endCol = startCol + shapeData[0].length;
-
-  for (let r = startRow; r < endRow; ++r) {
-    for (let c = startCol; c < endCol; ++c) {
-      if (r >= 0 && r < BOARD_HEIGHT && c >= 0 && c < BOARD_WIDTH) {
-        if (boardData[r][c] === 0 && shapeData[r - startRow][c - startCol] !== 0) {
-          boardData[r][c] = shapeData[r - startRow][c - startCol];
-        }
-      }
-    }
-  }
-
-  return boardData;
-};
 
 class Tetris extends React.Component {
 
@@ -90,7 +38,7 @@ class Tetris extends React.Component {
   componentDidMount() {
     this.gameTimer = setInterval(
       () => this.tick(),
-      100
+      200
     );
   }
 
@@ -113,7 +61,7 @@ class Tetris extends React.Component {
         index: Math.floor(Math.random() * shapes.length),
         rotation: 0,
         row: 0,
-        col: Math.floor(Math.random() * (BOARD_WIDTH - 4)),
+        col: Math.floor(Math.random() * (boardData[0].length - 4)),
       };
       this.setState({
         boardData: newBoardData,
@@ -133,14 +81,31 @@ class Tetris extends React.Component {
       this.moveLeftRight(-1);
     } else if (event.keyCode === RIGHT_KEY) {
       this.moveLeftRight(1);
+    } else if (event.keyCode === UP_KEY) {
+      this.rotate();
     }
   };
 
-  moveLeftRight = (distance) => {
+  moveLeftRight = (direction) => {
     const { boardData, currentShapeState } = this.state;
     const newShapeState = {
       ...currentShapeState,
-      col: currentShapeState.col + distance,
+      col: currentShapeState.col + direction,
+    };
+    if (!hasCollision(boardData, newShapeState)) {
+      this.setState({
+        ...this.state,
+        currentShapeState: newShapeState,
+      })
+    }
+  };
+
+  rotate = () => {
+    const { boardData, currentShapeState } = this.state;
+    const { index, rotation } = currentShapeState;
+    const newShapeState = {
+        ...currentShapeState,
+      rotation: (rotation - 1 + shapes[index].length) % shapes[index].length,
     };
     if (!hasCollision(boardData, newShapeState)) {
       this.setState({

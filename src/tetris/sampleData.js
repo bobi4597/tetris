@@ -1,8 +1,13 @@
+import {
+  BOARD_HEIGHT,
+  BOARD_WIDTH,
+} from "./gameLogic";
+
 const prepareInitialData = (value = 0) => {
   const data = [];
-  for (let i = 0; i < 20; ++i) {
+  for (let i = 0; i < BOARD_HEIGHT; ++i) {
     const row = [];
-    for (let j = 0; j < 10; ++j) {
+    for (let j = 0; j < BOARD_WIDTH; ++j) {
       row.push(value);
     }
     data.push(row);
