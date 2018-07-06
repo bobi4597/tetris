@@ -13,7 +13,7 @@ import {
 const LEFT_KEY = 37;
 const UP_KEY = 38;
 const RIGHT_KEY = 39;
-// const DOWN_KEY = 40;
+const DOWN_KEY = 40;
 
 const StyledTetris = styled.main`
   display: flex;
@@ -78,19 +78,22 @@ class Tetris extends React.Component {
 
   handleKeyDown = (event) => {
     if (event.keyCode === LEFT_KEY) {
-      this.moveLeftRight(-1);
+      this.move(-1, 0);
     } else if (event.keyCode === RIGHT_KEY) {
-      this.moveLeftRight(1);
+      this.move(1, 0);
     } else if (event.keyCode === UP_KEY) {
       this.rotate();
+    } else if (event.keyCode === DOWN_KEY) {
+      this.move(0, 1);
     }
   };
 
-  moveLeftRight = (direction) => {
+  move = (horizontalDirection, verticalDirection) => {
     const { boardData, currentShapeState } = this.state;
     const newShapeState = {
       ...currentShapeState,
-      col: currentShapeState.col + direction,
+      col: currentShapeState.col + horizontalDirection,
+      row: currentShapeState.row + verticalDirection,
     };
     if (!hasCollision(boardData, newShapeState)) {
       this.setState({
