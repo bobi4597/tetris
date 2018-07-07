@@ -67,6 +67,7 @@ export const finalizeShapeOnBoard = (boardData, shapeState) => {
   const startCol = shapeState.col;
   const endCol = startCol + shapeData[0].length;
 
+  // 1. copy the shape to the board
   for (let r = startRow; r < endRow; ++r) {
     for (let c = startCol; c < endCol; ++c) {
       if (r >= 0 && r < BOARD_HEIGHT && c >= 0 && c < BOARD_WIDTH) {
@@ -77,5 +78,37 @@ export const finalizeShapeOnBoard = (boardData, shapeState) => {
     }
   }
 
+  // 2. clear full rows
+  let hasFullRows = false;
+  boardData.forEach((row) => {
+    if (row.every((cell) => cell !== 0)) {
+      hasFullRows = true;
+      row.forEach((value, index, array) => {
+        array[index] = 0;
+      });
+    }
+  });
+
+  if (hasFullRows) {
+    // 3. shift down non-empty rows
+    let storeIndex = BOARD_HEIGHT - 1 - boardData.slice().reverse().findIndex((row) => row.every((cell) => cell === 0));
+    for (let row = storeIndex - 1; row >= 0; --row) {
+      if (boardData[row].every((cell) => cell === 0)) {
+
+      } else {
+        if (storeIndex !== row) {
+          boardData[storeIndex] = boardData[row].slice();
+          --storeIndex;
+        }
+      }
+    }
+
+    // 4. clean-up after shifting down
+    const slicedBoardData = boardData.slice(0, storeIndex + 1);
+    slicedBoardData.forEach((row, rowIndex) =>
+      boardData[rowIndex].forEach((cell, index, array) => array[index] = 0)
+    );
+
+  }
   return boardData;
 };
