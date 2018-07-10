@@ -112,3 +112,16 @@ export const finalizeShapeOnBoard = (boardData, shapeState) => {
   }
   return boardData;
 };
+
+export const randomShape = () => {
+  const index = Math.floor(Math.random() * shapes.length);
+  const firstRow = shapes[index][0][0];
+  const col = Math.floor((BOARD_WIDTH - firstRow.length) / 2);
+  const row = firstRow.every(val => val === 0) ? -1 : 0;
+  return {
+    index: index,
+    rotation: 0,
+    row: row,
+    col: col
+  }
+};

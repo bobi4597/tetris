@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import prepareInitialData from './sampleData';
 import shapes from './shapes/index.js';
 
-import Board from "./Board";
+import Board from './Board';
+import InfoPanel from './info-panel/InfoPanel';
 import {
   calculateMergedBoardData,
   finalizeShapeOnBoard,
-  hasCollision,
+  hasCollision, randomShape,
 } from "./gameLogic";
 
 const LEFT_KEY = 37;
@@ -17,7 +18,7 @@ const DOWN_KEY = 40;
 
 const StyledTetris = styled.main`
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
 `;
 
 class Tetris extends React.Component {
@@ -26,12 +27,8 @@ class Tetris extends React.Component {
     super(props);
     this.state = {
       boardData: prepareInitialData(),
-      currentShapeState: {
-        index: 0,
-        rotation: 0,
-        row: 0,
-        col: 0,
-      }
+      currentShapeState: randomShape(),
+      nextShapeState: randomShape(),
     };
   }
 
@@ -47,31 +44,26 @@ class Tetris extends React.Component {
   }
 
   tick() {
-    const { currentShapeState, boardData } = this.state;
+    const { currentShapeState, nextShapeState, boardData } = this.state;
 
-    const nextShapeState = {
+    const currentShapeStatePlusOneRow = {
       ...currentShapeState,
       row: currentShapeState.row + 1,
     };
 
-    if (hasCollision(boardData, nextShapeState)) {
+    if (hasCollision(boardData, currentShapeStatePlusOneRow)) {
       // stop here and start with new shape from top
       const newBoardData = finalizeShapeOnBoard(boardData, currentShapeState);
-      const newShapeState = {
-        index: Math.floor(Math.random() * shapes.length),
-        rotation: 0,
-        row: 0,
-        col: Math.floor(Math.random() * (boardData[0].length - 4)),
-      };
       this.setState({
         boardData: newBoardData,
-        currentShapeState: newShapeState,
+        currentShapeState: nextShapeState,
+        nextShapeState: randomShape(),
       });
     } else {
       // fall down
       this.setState({
-        boardData: boardData,
-        currentShapeState: nextShapeState,
+        ...this.state,
+        currentShapeState: currentShapeStatePlusOneRow,
       });
     }
   }
@@ -90,15 +82,15 @@ class Tetris extends React.Component {
 
   move = (horizontalDirection, verticalDirection) => {
     const { boardData, currentShapeState } = this.state;
-    const newShapeState = {
+    const currentShapeStateAfterMove = {
       ...currentShapeState,
       col: currentShapeState.col + horizontalDirection,
       row: currentShapeState.row + verticalDirection,
     };
-    if (!hasCollision(boardData, newShapeState)) {
+    if (!hasCollision(boardData, currentShapeStateAfterMove)) {
       this.setState({
         ...this.state,
-        currentShapeState: newShapeState,
+        currentShapeState: currentShapeStateAfterMove,
       })
     }
   };
@@ -119,10 +111,11 @@ class Tetris extends React.Component {
   };
 
   render() {
-    const {boardData, currentShapeState} = this.state;
+    const {boardData, currentShapeState, nextShapeState} = this.state;
     const mergedBoardData = calculateMergedBoardData(boardData, currentShapeState);
     return <StyledTetris tabIndex="0" onKeyDown={this.handleKeyDown}>
-      <Board boardData={mergedBoardData} />
+      <Board boardData={mergedBoardData}/>
+      <InfoPanel nextShapeState={nextShapeState}/>
     </StyledTetris>;
   }
 }
