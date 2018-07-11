@@ -18,8 +18,8 @@ const gLeft2 = [
 
 const gLeft3 = [
   [0, 1, 0],
-  [0, 1, 1],
   [0, 1, 0],
+  [0, 1, 1],
 ];
 
 const gLeft = [gLeft0, gLeft1, gLeft2, gLeft3];
