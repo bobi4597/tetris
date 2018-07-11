@@ -8,15 +8,16 @@ const Container = styled.div`
   text-align: center;
   flex-direction: column;
   justify-content: center;
+  border: 1px solid #dddddd;
 `;
 
 const Title = styled.div`
   height: 30px;
   line-height: 30px;
+  border-bottom: 1px solid #dddddd;
 `;
 
 const ShapeContainer = styled.div`
-  border: 1px solid #dddddd;
   height: 80px;
 `;
 
@@ -24,6 +25,7 @@ const Shape = styled.div`
   height: 80px;
   display: inline-flex;
   flex-direction: column;
+  justify-content: center;
 `;
 
 const Row = styled.div`
@@ -48,7 +50,9 @@ const NextShapePreview = ({ nextShapeState }) => {
     <Title>Next</Title>
     <ShapeContainer>
       <Shape>
-        {nextShape.map((row, rowIndex) => (
+      {nextShape
+        .filter(row => row.some(cell => cell !== 0))
+        .map((row, rowIndex) => (
           <Row key={rowIndex}>
             {row.map((cellData, cellIndex) => <Cell key={cellIndex} cellData={cellData}/>)}
           </Row>))
