@@ -79,17 +79,17 @@ export const finalizeShapeOnBoard = (boardData, shapeState) => {
   }
 
   // 2. clear full rows
-  let hasFullRows = false;
+  let numberOfFullLines = 0;
   boardData.forEach((row) => {
     if (row.every((cell) => cell !== 0)) {
-      hasFullRows = true;
+      ++numberOfFullLines;
       row.forEach((value, index, array) => {
         array[index] = 0;
       });
     }
   });
 
-  if (hasFullRows) {
+  if (numberOfFullLines > 0) {
     // 3. shift down non-empty rows
     let storeIndex = BOARD_HEIGHT - 1 - boardData.slice().reverse().findIndex((row) => row.every((cell) => cell === 0));
     for (let row = storeIndex - 1; row >= 0; --row) {
@@ -110,7 +110,10 @@ export const finalizeShapeOnBoard = (boardData, shapeState) => {
     );
 
   }
-  return boardData;
+  return {
+    numberOfFullLines: numberOfFullLines,
+    newBoardData: boardData,
+  };
 };
 
 export const randomShape = () => {

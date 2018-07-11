@@ -44,7 +44,7 @@ const Cell = styled.div`
   })};
 `;
 
-const NextShapePreview = ({ nextShapeState }) => {
+const NextShapeInfo = ({ nextShapeState }) => {
   const nextShape = shapes[nextShapeState.index][0];
   return <Container>
     <Title>Next</Title>
@@ -62,4 +62,4 @@ const NextShapePreview = ({ nextShapeState }) => {
   </Container>;
 };
 
-export default NextShapePreview;
+export default NextShapeInfo;

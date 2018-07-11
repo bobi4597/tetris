@@ -1,15 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
-import NextShapePreview from "./NextShapePreview";
+import NextShapeInfo from "./NextShapeInfo";
+import FullLinesInfo from "./FullLinesInfo";
 
 const StyledInfoPanel = styled.div`
   flex-basis: 100px;
 `;
 
-const InfoPanel = ({ nextShapeState }) => {
+const InfoPanel = ({ nextShapeState, fullLines }) => {
 
   return <StyledInfoPanel>
-    <NextShapePreview nextShapeState={nextShapeState} />
+    <NextShapeInfo nextShapeState={nextShapeState} />
+    <FullLinesInfo fullLines={fullLines} />
   </StyledInfoPanel>;
 };
 
