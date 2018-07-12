@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Row from "./Row";
+import Row from "tetris/Row";
 
 const StyledBoard = styled.div`
   display: flex;

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import NextShapeInfo from "./NextShapeInfo";
-import FullLinesInfo from "./FullLinesInfo";
+import NextShapeInfo from "tetris/info-panel/NextShapeInfo";
+import FullLinesInfo from "tetris/info-panel/FullLinesInfo";
 
 const StyledInfoPanel = styled.div`
   flex-basis: 100px;

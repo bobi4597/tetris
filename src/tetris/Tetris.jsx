@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import prepareInitialData from './sampleData';
-import shapes from './shapes/index.js';
+import shapes from 'tetris/shapes';
 
 import Board from './Board';
 import InfoPanel from './info-panel/InfoPanel';

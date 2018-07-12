@@ -1,10 +1,10 @@
-import long from './long';
-import square from './square';
-import t from './t';
-import gLeft from './gLeft';
-import gRight from './gRight';
-import zLeft from './zLeft';
-import zRight from './zRight';
+import long from 'tetris/shapes/long';
+import square from 'tetris/shapes/square';
+import t from 'tetris/shapes/t';
+import gLeft from 'tetris/shapes/gLeft';
+import gRight from 'tetris/shapes/gRight';
+import zLeft from 'tetris/shapes/zLeft';
+import zRight from 'tetris/shapes/zRight';
 
 const shapes = [
   long,

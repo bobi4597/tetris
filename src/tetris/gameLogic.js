@@ -1,4 +1,4 @@
-import shapes from "./shapes";
+import shapes from "tetris/shapes";
 
 export const BOARD_HEIGHT = 20;
 export const BOARD_WIDTH = 10;

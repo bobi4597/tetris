@@ -1,7 +1,7 @@
 import {
   BOARD_HEIGHT,
   BOARD_WIDTH,
-} from "./gameLogic";
+} from "tetris/gameLogic";
 
 const prepareInitialData = (value = 0) => {
   const data = [];

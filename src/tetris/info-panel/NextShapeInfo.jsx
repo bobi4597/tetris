@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { switchProp } from 'styled-tools';
-import shapes from "../shapes";
+import shapes from "tetris/shapes";
 
 const Container = styled.div`
   display: flex;

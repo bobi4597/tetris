@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Cell from './Cell';
+import Cell from 'tetris/Cell';
 
 const StyledRow = styled.div`
   display: flex;

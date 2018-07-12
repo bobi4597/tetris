@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import './App.css';
-import Tetris from './tetris/Tetris.jsx';
+import Tetris from 'tetris/Tetris.jsx';
 
 class App extends Component {
   render() {

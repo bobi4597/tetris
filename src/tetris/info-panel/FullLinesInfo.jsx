@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const Container = styled.div`
   margin-top: 30px;
   border: 1px solid #dddddd;
+  text-align: center;
 `;
 
 const Title = styled.div`
