@@ -45,7 +45,7 @@ export const calculateMergedBoardData = (boardData, shapeState) => {
   for (let r = shapeState.row; r < shapeState.row + shape.length; ++r) {
     for (let c = shapeState.col; c < shapeState.col + shape[0].length; ++c) {
       if (r >= 0 && r < BOARD_HEIGHT && c >= 0 && c < BOARD_WIDTH && mergedBoardData[r][c] === 0) {
-        mergedBoardData[r][c] = shape[r - shapeState.row][c - shapeState.col];
+        mergedBoardData[r][c] = shape[r - shapeState.row][c - shapeState.col] * shapeState.color;
       }
     }
   }
@@ -72,7 +72,7 @@ export const finalizeShapeOnBoard = (boardData, shapeState) => {
     for (let c = startCol; c < endCol; ++c) {
       if (r >= 0 && r < BOARD_HEIGHT && c >= 0 && c < BOARD_WIDTH) {
         if (boardData[r][c] === 0 && shapeData[r - startRow][c - startCol] !== 0) {
-          boardData[r][c] = shapeData[r - startRow][c - startCol];
+          boardData[r][c] = shapeData[r - startRow][c - startCol] * shapeState.color;
         }
       }
     }
@@ -121,10 +121,12 @@ export const randomShape = () => {
   const firstRow = shapes[index][0][0];
   const col = Math.floor((BOARD_WIDTH - firstRow.length) / 2);
   const row = firstRow.every(val => val === 0) ? -1 : 0;
+  const color = index + 1;
   return {
     index: index,
     rotation: 0,
     row: row,
-    col: col
+    col: col,
+    color: color,
   }
 };

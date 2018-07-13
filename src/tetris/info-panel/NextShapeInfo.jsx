@@ -40,7 +40,13 @@ const Cell = styled.div`
   height: 20px;
   background-color: ${switchProp('cellData', {
     0: 'transparent',
-    1: 'blue',
+    1: 'cyan', 
+    2: '#eeee00',
+    3: 'purple',
+    4: '#cc7722', 
+    5: 'blue',
+    6: 'red',
+    7: 'green',
   })};
 `;
 
@@ -54,7 +60,7 @@ const NextShapeInfo = ({ nextShapeState }) => {
         .filter(row => row.some(cell => cell !== 0))
         .map((row, rowIndex) => (
           <Row key={rowIndex}>
-            {row.map((cellData, cellIndex) => <Cell key={cellIndex} cellData={cellData}/>)}
+            {row.map((cellData, cellIndex) => <Cell key={cellIndex} cellData={cellData * nextShapeState.color}/>)}
           </Row>))
         }
       </Shape>

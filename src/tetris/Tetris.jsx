@@ -36,7 +36,7 @@ class Tetris extends React.Component {
   componentDidMount() {
     this.gameTimer = setInterval(
       () => this.tick(),
-      200
+      500
     );
   }
 
