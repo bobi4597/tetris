@@ -1,15 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
-import prepareInitialData from './sampleData';
+import prepareInitialData from 'tetris/sampleData';
 import shapes from 'tetris/shapes';
 
-import Board from './Board';
-import InfoPanel from './info-panel/InfoPanel';
+import Board from 'tetris/Board';
+import InfoPanel from 'tetris/info-panel/InfoPanel';
 import {
   calculateMergedBoardData,
   finalizeShapeOnBoard,
   hasCollision, randomShape,
 } from "./gameLogic";
+import {
+  getCurrentLevel,
+  getCurrentTickInterval,
+  INITIAL_TICK_INTERVAL,
+} from "tetris/game-logic/levels";
 
 const LEFT_KEY = 37;
 const UP_KEY = 38;
@@ -30,13 +35,14 @@ class Tetris extends React.Component {
       currentShapeState: randomShape(),
       nextShapeState: randomShape(),
       fullLines: 0,
+      level: 0,
     };
   }
 
   componentDidMount() {
     this.gameTimer = setInterval(
       () => this.tick(),
-      500
+      getCurrentTickInterval(this.state.fullLines)
     );
   }
 
@@ -44,8 +50,16 @@ class Tetris extends React.Component {
     clearInterval(this.gameTimer);
   }
 
+  setSpeed(interval = INITIAL_TICK_INTERVAL) {
+    clearInterval(this.gameTimer);
+    this.gameTimer = setInterval(
+      () => this.tick(),
+      interval,
+    );
+  }
+
   tick() {
-    const { currentShapeState, nextShapeState, boardData, fullLines } = this.state;
+    const { currentShapeState, nextShapeState, boardData, fullLines, level } = this.state;
 
     const currentShapeStatePlusOneRow = {
       ...currentShapeState,
@@ -53,17 +67,23 @@ class Tetris extends React.Component {
     };
 
     if (hasCollision(boardData, currentShapeStatePlusOneRow)) {
-      // stop here and start with new shape from top
+      // cannot fall anymore
       const { newBoardData, numberOfFullLines } = finalizeShapeOnBoard(boardData, currentShapeState);
+      const newFullLines = fullLines + numberOfFullLines;
+      const newLevel = getCurrentLevel(newFullLines);
+      if (newLevel !== level) {
+        this.setSpeed(getCurrentTickInterval(newFullLines));
+      }
       this.setState({
         ...this.state,
         boardData: newBoardData,
         currentShapeState: nextShapeState,
         nextShapeState: randomShape(),
-        fullLines: fullLines + numberOfFullLines,
+        fullLines: newFullLines,
+        level: newLevel,
       });
     } else {
-      // fall down
+      // still falling down
       this.setState({
         ...this.state,
         currentShapeState: currentShapeStatePlusOneRow,
@@ -114,11 +134,11 @@ class Tetris extends React.Component {
   };
 
   render() {
-    const {boardData, currentShapeState, nextShapeState, fullLines } = this.state;
+    const {boardData, currentShapeState, nextShapeState, fullLines, level } = this.state;
     const mergedBoardData = calculateMergedBoardData(boardData, currentShapeState);
     return <StyledTetris tabIndex="0" onKeyDown={this.handleKeyDown}>
       <Board boardData={mergedBoardData}/>
-      <InfoPanel nextShapeState={nextShapeState} fullLines={fullLines} />
+      <InfoPanel nextShapeState={nextShapeState} fullLines={fullLines} level={level}/>
     </StyledTetris>;
   }
 }
