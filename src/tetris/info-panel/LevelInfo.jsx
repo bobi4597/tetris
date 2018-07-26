@@ -21,7 +21,7 @@ const Content = styled.div`
 const LevelInfo = ({ level }) =>
   <Container>
     <Title>Level</Title>
-    <Content>{level + 1}</Content>
+    <Content>{level && level + 1}</Content>
   </Container>;
 
 export default LevelInfo;

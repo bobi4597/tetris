@@ -4,6 +4,7 @@ import prepareInitialData from 'tetris/sampleData';
 import shapes from 'tetris/shapes';
 
 import Board from 'tetris/Board';
+import ControlPanel from "tetris/control-panel/ControlPanel";
 import InfoPanel from 'tetris/info-panel/InfoPanel';
 import {
   calculateMergedBoardData,
@@ -32,14 +33,45 @@ class Tetris extends React.Component {
     super(props);
     this.state = {
       boardData: prepareInitialData(),
-      currentShapeState: randomShape(),
-      nextShapeState: randomShape(),
-      fullLines: 0,
-      level: 0,
+      gameStarted: false,
+      gamePaused: false,
     };
   }
 
   componentDidMount() {
+    // do not start the game here
+  }
+
+  startGame() {
+    this.setState({
+      boardData: prepareInitialData(),
+      currentShapeState: randomShape(),
+      nextShapeState: randomShape(),
+      gameStarted: true,
+      gamePaused: false,
+      fullLines: 0,
+      level: 0,
+    });
+    this.startGameTimer();
+  }
+
+  pauseGame() {
+    clearInterval(this.gameTimer);
+    this.setState({
+      ...this.state,
+      gamePaused: true,
+    });
+  }
+
+  resumeGame() {
+    this.setState({
+      ...this.state,
+      gamePaused: false,
+    });
+    this.startGameTimer();
+  }
+
+  startGameTimer() {
     this.gameTimer = setInterval(
       () => this.tick(),
       getCurrentTickInterval(this.state.fullLines)
@@ -60,7 +92,6 @@ class Tetris extends React.Component {
 
   tick() {
     const { currentShapeState, nextShapeState, boardData, fullLines, level } = this.state;
-
     const currentShapeStatePlusOneRow = {
       ...currentShapeState,
       row: currentShapeState.row + 1,
@@ -134,12 +165,22 @@ class Tetris extends React.Component {
   };
 
   render() {
-    const {boardData, currentShapeState, nextShapeState, fullLines, level } = this.state;
-    const mergedBoardData = calculateMergedBoardData(boardData, currentShapeState);
-    return <StyledTetris tabIndex="0" onKeyDown={this.handleKeyDown}>
-      <Board boardData={mergedBoardData}/>
-      <InfoPanel nextShapeState={nextShapeState} fullLines={fullLines} level={level}/>
-    </StyledTetris>;
+    const {
+      boardData, currentShapeState, nextShapeState, fullLines, level, gameStarted, gamePaused,
+    } = this.state;
+    const mergedBoardData = gameStarted ? calculateMergedBoardData(boardData, currentShapeState) : boardData;
+
+    return (
+      <StyledTetris tabIndex="0" onKeyDown={this.handleKeyDown}>
+        <ControlPanel gameStarted={gameStarted}
+                      gamePaused={gamePaused}
+                      startGame={() => this.startGame()}
+                      pauseGame={() => this.pauseGame()}
+                      resumeGame={() => this.resumeGame()}/>
+        <Board boardData={mergedBoardData}/>
+        <InfoPanel nextShapeState={nextShapeState} fullLines={fullLines} level={level}/>
+      </StyledTetris>
+    );
   }
 }
 

@@ -51,7 +51,7 @@ const Cell = styled.div`
 `;
 
 const NextShapeInfo = ({ nextShapeState }) => {
-  const nextShape = shapes[nextShapeState.index][0];
+  const nextShape = nextShapeState ? shapes[nextShapeState.index][0] : [];
   return <Container>
     <Title>Next</Title>
     <ShapeContainer>
