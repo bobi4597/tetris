@@ -1,7 +1,7 @@
-const LINES_PER_LEVEL = 10;
+export const LINES_PER_LEVEL = 10;
 export const INITIAL_TICK_INTERVAL = 1000;
-const TICK_INTERVAL_DECREASE_PER_LEVEL = 50;
-const MINIMAL_TICK_INTERVAL = 100;
+export const TICK_INTERVAL_DECREASE_PER_LEVEL = 50;
+export const MINIMAL_TICK_INTERVAL = 100;
 
 /**
  * Calculates the current level based on the number of cleared lines so far.
