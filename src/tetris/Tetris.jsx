@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import prepareInitialData from 'tetris/sampleData';
 import shapes from 'tetris/shapes';
@@ -42,6 +43,10 @@ class Tetris extends React.Component {
     // do not start the game here
   }
 
+  focusTetrisDiv() {
+    ReactDOM.findDOMNode(this.refs.tetrisDiv).focus();
+  }
+
   startGame() {
     this.setState({
       boardData: prepareInitialData(),
@@ -53,6 +58,7 @@ class Tetris extends React.Component {
       level: 0,
     });
     this.startGameTimer();
+    this.focusTetrisDiv();
   }
 
   pauseGame() {
@@ -69,6 +75,7 @@ class Tetris extends React.Component {
       gamePaused: false,
     });
     this.startGameTimer();
+    this.focusTetrisDiv();
   }
 
   startGameTimer() {
@@ -171,7 +178,7 @@ class Tetris extends React.Component {
     const mergedBoardData = gameStarted ? calculateMergedBoardData(boardData, currentShapeState) : boardData;
 
     return (
-      <StyledTetris tabIndex="0" onKeyDown={this.handleKeyDown}>
+      <StyledTetris ref="tetrisDiv" tabIndex="0" onKeyDown={this.handleKeyDown}>
         <ControlPanel gameStarted={gameStarted}
                       gamePaused={gamePaused}
                       startGame={() => this.startGame()}
