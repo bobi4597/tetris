@@ -78,6 +78,10 @@ class Tetris extends React.Component {
     this.focusTetrisDiv();
   }
 
+  gameOver() {
+    clearInterval(this.gameTimer);
+  }
+
   startGameTimer() {
     this.gameTimer = setInterval(
       () => this.tick(),
@@ -99,19 +103,33 @@ class Tetris extends React.Component {
 
   tick() {
     const { currentShapeState, nextShapeState, boardData, fullLines, level } = this.state;
+    // 1. Check for "Game Over"
+    if (hasCollision(boardData, currentShapeState)) {
+      const { newBoardData } = finalizeShapeOnBoard(boardData, currentShapeState);
+      this.setState({
+        ...this.state,
+        boardData: newBoardData,
+        gameStarted: false,
+        gamePaused: false,
+      });
+      this.gameOver();
+      return;
+    }
+    // 2. If not Game Over, check if the shape can still fall down
     const currentShapeStatePlusOneRow = {
       ...currentShapeState,
       row: currentShapeState.row + 1,
     };
 
     if (hasCollision(boardData, currentShapeStatePlusOneRow)) {
-      // cannot fall anymore
+      // 2.1. cannot fall anymore
       const { newBoardData, numberOfFullLines } = finalizeShapeOnBoard(boardData, currentShapeState);
       const newFullLines = fullLines + numberOfFullLines;
       const newLevel = getCurrentLevel(newFullLines);
       if (newLevel !== level) {
         this.setSpeed(getCurrentTickInterval(newFullLines));
       }
+      // add new shape
       this.setState({
         ...this.state,
         boardData: newBoardData,
@@ -121,7 +139,7 @@ class Tetris extends React.Component {
         level: newLevel,
       });
     } else {
-      // still falling down
+      // 2.2. still falling down
       this.setState({
         ...this.state,
         currentShapeState: currentShapeStatePlusOneRow,
